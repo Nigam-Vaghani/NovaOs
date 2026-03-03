@@ -1,4 +1,5 @@
 from novaos.utils.logger import setup_logger
+
 setup_logger()
 
 def interpret(text: str) -> dict:
@@ -21,6 +22,8 @@ def interpret(text: str) -> dict:
             "mode": "by_extension",
             "dry_run": True
         }
+    if "undo import" in text:
+        return {"action": "undo_imports"}
     if "undo" in text:
         return {"action": "undo_last"}
 
@@ -29,5 +32,10 @@ def interpret(text: str) -> dict:
             "action": "analyze_project",
             "target": "current_directory"
         }
-    
+    if "fix imports" in text or "fix import" in text:
+        return {
+            "action": "fix_unused_imports",
+            "target": "current_directory",
+            "dry_run": True
+        }
     return {"action": "unknown", "original": text}

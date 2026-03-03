@@ -38,8 +38,6 @@ def command(text, force):
 
     print("Result:")
 
-    print("Result:")
-
     if isinstance(result, dict):
         print(json.dumps(result, indent=4))
 
