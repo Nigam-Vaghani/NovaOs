@@ -16,12 +16,12 @@ def run():
 def command(text):
     """Process a NovaOS command"""
     from novaos.core.interpreter import interpret
-    from novaos.core.executor import execute
+    from novaos.core.controller import process
 
     print(f"Received command: {text}")
 
     structured = interpret(text)
-    result = execute(structured)
+    result = process(structured)
 
     print("Result:", result)
 

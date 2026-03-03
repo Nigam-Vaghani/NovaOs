@@ -1,3 +1,5 @@
+from novaos.utils.logger import setup_logger
+setup_logger()
 def interpret(text: str) -> dict:
     """
     Converts natural language to structured command.
