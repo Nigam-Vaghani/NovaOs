@@ -1,3 +1,4 @@
+import json
 import click
 from novaos.app import app
 
@@ -36,9 +37,16 @@ def command(text, force):
     result = process(structured)
 
     print("Result:")
-    if isinstance(result, list):
+
+    print("Result:")
+
+    if isinstance(result, dict):
+        print(json.dumps(result, indent=4))
+
+    elif isinstance(result, list):
         for item in result:
             print(" -", item)
+
     else:
         print(result)
 

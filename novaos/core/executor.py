@@ -93,10 +93,19 @@ def execute(command: dict):
         analyzer = CodeAnalyzer(root)
         report = analyzer.analyze()
 
-        if not report:
-            return "No major issues found."
+        # Save report to file
+        import datetime
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        report_file = Path(f"novaos_report_{timestamp}.json")
 
-        return report
+        import json
+        with open(report_file, "w") as f:
+            json.dump(report, f, indent=4)
+
+        return {
+            "message": f"Report saved to {report_file.name}",
+            "summary": report
+        }
     
     if action == "undo_last":
         undo_file = UNDO_FILE
