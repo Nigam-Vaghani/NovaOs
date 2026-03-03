@@ -48,5 +48,32 @@ def command(text, force):
     else:
         print(result)
 
+@cli.command()
+def listen():
+    """Start voice command listener"""
+    from novaos.input.voice import listen as voice_listen
+    from novaos.core.interpreter import interpret
+    from novaos.core.controller import process
+
+    text = voice_listen()
+
+    if not text:
+        return
+
+    structured = interpret(text)
+    result = process(structured)
+
+    print("Result:")
+
+    import json
+    if isinstance(result, dict):
+        print(json.dumps(result, indent=4))
+    elif isinstance(result, list):
+        for item in result:
+            print(" -", item)
+    else:
+        print(result)
+        
+        
 if __name__ == "__main__":
     cli()

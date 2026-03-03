@@ -22,6 +22,8 @@ def interpret(text: str) -> dict:
             "mode": "by_extension",
             "dry_run": True
         }
+    if "analyze and fix" in text:
+        return {"action": "analyze_and_fix"}
     if "undo import" in text:
         return {"action": "undo_imports"}
     if "undo" in text:
