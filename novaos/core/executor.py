@@ -3,7 +3,7 @@ import os
 import shutil
 from pathlib import Path
 import json
-
+from novaos.intelligence.code_analyzer import CodeAnalyzer
 
 UNDO_FILE = Path.home() / ".novaos" / "novaos_undo.json"
 
@@ -85,6 +85,19 @@ def execute(command: dict):
         # -----------------------------
     # UNDO LAST ORGANIZATION
     # -----------------------------
+        # -----------------------------
+    # PROJECT ANALYSIS
+    # -----------------------------
+    if action == "analyze_project":
+        root = Path.cwd()
+        analyzer = CodeAnalyzer(root)
+        report = analyzer.analyze()
+
+        if not report:
+            return "No major issues found."
+
+        return report
+    
     if action == "undo_last":
         undo_file = UNDO_FILE
 

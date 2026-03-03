@@ -24,4 +24,10 @@ def interpret(text: str) -> dict:
     if "undo" in text:
         return {"action": "undo_last"}
 
+    if "analyze" in text:
+        return {
+            "action": "analyze_project",
+            "target": "current_directory"
+        }
+    
     return {"action": "unknown", "original": text}
