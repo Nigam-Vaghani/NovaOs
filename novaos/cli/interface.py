@@ -1,6 +1,9 @@
 import json
 import click
 from novaos.app import app
+from novaos.memory.database import init_db
+init_db()
+
 
 @click.group()
 def cli():
@@ -35,7 +38,9 @@ def command(text, force):
         structured["dry_run"] = False
 
     result = process(structured)
-
+    from novaos.memory.database import save_history
+    save_history(text, str(result))
+    
     print("Result:")
 
     if isinstance(result, dict):
@@ -62,7 +67,8 @@ def listen():
 
     structured = interpret(text)
     result = process(structured)
-
+    from novaos.memory.database import save_history
+    save_history(text, str(result))
     print("Result:")
 
     import json
@@ -74,6 +80,21 @@ def listen():
     else:
         print(result)
         
-        
+@cli.command()
+def history():
+    """Show command history"""
+    from novaos.memory.database import get_history
+
+    records = get_history()
+
+    if not records:
+        print("No history found.")
+        return
+
+    for cmd, result, timestamp in records:
+        print(f"\n[{timestamp}]")
+        print("Command:", cmd)
+        print("Result:", result[:200])
+
 if __name__ == "__main__":
     cli()
