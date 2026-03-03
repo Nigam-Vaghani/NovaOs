@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#0f172a" />
-  <rect x="40" y="40" width="1120" height="550" rx="12" fill="#111827" stroke="#374151" />
-  <text x="70" y="110" fill="#e5e7eb" font-size="38" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Organize Downloads - Demo Screenshot</text>
-  <text x="70" y="165" fill="#9ca3af" font-size="24" font-family="Segoe UI, Arial, sans-serif">Replace this file with your actual screenshot</text>
-  <text x="70" y="235" fill="#fbbf24" font-size="28" font-family="Consolas, monospace">nova "organize downloads" --force</text>
-  <text x="70" y="285" fill="#86efac" font-size="22" font-family="Consolas, monospace">Result: Moved file1.pdf → pdf/</text>
-  <text x="70" y="320" fill="#86efac" font-size="22" font-family="Consolas, monospace">Result: Moved image1.png → png/</text>
-</svg>

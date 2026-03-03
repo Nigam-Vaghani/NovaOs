@@ -144,14 +144,30 @@ nova "undo import"
 
 NovaOS stores removed imports in `import_log.json` and uses it for restore.
 
-![Fix Import Demo](docs/images/fix-import-demo.svg)
+Before: 
+![Fix Import Demo](docs/images/Before_download.png)
+
+After:
+![Fix Import Demo](docs/images/After_download.png)
 
 ---
 
 ## Output files you will see
-s
+
 - `novaos_report_YYYYMMDD_HHMMSS.json` → analysis report
 - `import_log.json` → temporary undo log for import fixes
+
+### AI Summary Output
+
+After running `nova "analyze project"`, NovaOS also generates a readable AI summary so you can quickly understand key problems without opening every file.
+
+![AI Summary Output](docs/images/Summary.png)
+
+### Report File Output
+
+NovaOS saves the full structured report (`novaos_report_*.json`) with detailed issue data that you can review, share, or track over time.
+
+![Report File Output](docs/images/Report.png)
 
 ---
 
