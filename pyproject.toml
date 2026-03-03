@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "novaos"
+version = "0.1.0"
+description = "Voice-Enabled Local AI Developer Operating Layer"
+authors = [{name = "Nigam Vaghani"}]
+dependencies = [
+    "flask",
+    "click",
+    "psutil"
+]
+
+[project.scripts]
+nova = "novaos.cli.interface:cli"
