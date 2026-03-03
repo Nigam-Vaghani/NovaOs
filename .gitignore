@@ -7,7 +7,9 @@ __pycache__/
 os-env/
 venv/
 .env/
-
+.env
+.env.*
+!.env.example
 # Packaging
 build/
 dist/
@@ -36,3 +38,8 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local runtime/generated files
+novaos_memory.db
+import_log.json
+novaos_report_*.json

@@ -4,6 +4,8 @@ import json
 import ast
 from pathlib import Path
 from novaos.intelligence.code_analyzer import CodeAnalyzer
+from novaos.intelligence.ai_adapter import AIAdapter
+import datetime
 
 UNDO_FILE = Path.home() / ".novaos" / "novaos_undo.json"
 
@@ -202,22 +204,36 @@ def execute(command: dict):
         # -----------------------------
     # PROJECT ANALYSIS
     # -----------------------------
+        # -----------------------------
+    # PROJECT ANALYSIS
+    # -----------------------------
     if action == "analyze_project":
         root = Path.cwd()
         analyzer = CodeAnalyzer(root)
         report = analyzer.analyze()
 
-        # Save report to file
-        import datetime
+        # Generate timestamped report filename
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         report_file = Path(f"novaos_report_{timestamp}.json")
 
-        with open(report_file, "w") as f:
+        # Save structured report
+        with open(report_file, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=4)
 
+        # Optional AI summary
+        ai = AIAdapter()
+        summary_text = "AI not configured. Set GEMINI_API_KEY in .env or environment variables."
+
+        if ai.is_available():
+            try:
+                summary_text = ai.summarize(json.dumps(report))
+            except Exception:
+                summary_text = "AI summarization failed."
+
         return {
-            "message": f"Report saved to {report_file.name}",
-            "summary": report
+            "report_saved": report_file.name,
+            "analysis": report,
+            "ai_summary": summary_text
         }
     
     # -----------------------------
@@ -321,6 +337,9 @@ def execute(command: dict):
             changes.append(f"Saved undo log: {import_log_file.name}")
 
         return changes
+
+    if action == "undo_imports":
+        return _undo_import_fixes()
     
     if action == "undo_last":
         import_log_file = _get_import_log_file()

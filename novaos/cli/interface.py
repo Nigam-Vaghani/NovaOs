@@ -5,7 +5,68 @@ from novaos.memory.database import init_db
 init_db()
 
 
-@click.group()
+class NovaGroup(click.Group):
+    def resolve_command(self, ctx, args):
+        try:
+            return super().resolve_command(ctx, args)
+        except click.UsageError:
+            default_cmd = self.get_command(ctx, "command")
+            if default_cmd is None:
+                raise
+            return "command", default_cmd, args
+
+
+def _infer_color(value) -> str:
+    text = str(value).lower()
+
+    error_tokens = [
+        "error",
+        "failed",
+        "invalid",
+        "unknown command",
+        "blocked",
+    ]
+    warning_tokens = [
+        "warning",
+        "dry run",
+        "would",
+        "no ",
+        "not configured",
+        "not found",
+        "quota",
+        "truncated",
+    ]
+
+    if any(token in text for token in error_tokens):
+        return "red"
+    if any(token in text for token in warning_tokens):
+        return "yellow"
+    return "green"
+
+
+def _print_result(result):
+    if isinstance(result, dict):
+        ai_summary = result.get("ai_summary")
+        if ai_summary:
+            payload = dict(result)
+            payload.pop("ai_summary", None)
+            click.secho(json.dumps(payload, indent=4), fg=_infer_color(payload))
+            click.secho("\nAI Summary:", fg="green")
+            click.secho(str(ai_summary), fg=_infer_color(ai_summary))
+            return
+
+        click.secho(json.dumps(result, indent=4), fg=_infer_color(result))
+        return
+
+    if isinstance(result, list):
+        for item in result:
+            click.secho(f" - {item}", fg=_infer_color(item))
+        return
+
+    click.secho(str(result), fg=_infer_color(result))
+
+
+@click.group(cls=NovaGroup)
 def cli():
     """ NovaOs command line interface """
     pass
@@ -23,7 +84,7 @@ def command(text, force):
     from novaos.core.interpreter import interpret
     from novaos.core.controller import process
 
-    print(f"Received command: {text}")
+    click.secho(f"Received command: {text}", fg="green")
 
     structured = interpret(text)
 
@@ -31,7 +92,7 @@ def command(text, force):
     if structured.get("action") == "organize_directory" and not force:
         confirm = input("This will modify files. Continue? (yes/no): ")
         if confirm.lower() != "yes":
-            print("Operation cancelled.")
+            click.secho("Operation cancelled.", fg="yellow")
             return
         structured["dry_run"] = False
     elif force:
@@ -41,17 +102,8 @@ def command(text, force):
     from novaos.memory.database import save_history
     save_history(text, str(result))
     
-    print("Result:")
-
-    if isinstance(result, dict):
-        print(json.dumps(result, indent=4))
-
-    elif isinstance(result, list):
-        for item in result:
-            print(" -", item)
-
-    else:
-        print(result)
+    click.secho("Result:", fg="green")
+    _print_result(result)
 
 @cli.command()
 def listen():
@@ -69,16 +121,8 @@ def listen():
     result = process(structured)
     from novaos.memory.database import save_history
     save_history(text, str(result))
-    print("Result:")
-
-    import json
-    if isinstance(result, dict):
-        print(json.dumps(result, indent=4))
-    elif isinstance(result, list):
-        for item in result:
-            print(" -", item)
-    else:
-        print(result)
+    click.secho("Result:", fg="green")
+    _print_result(result)
         
 @cli.command()
 def history():
@@ -88,13 +132,13 @@ def history():
     records = get_history()
 
     if not records:
-        print("No history found.")
+        click.secho("No history found.", fg="yellow")
         return
 
     for cmd, result, timestamp in records:
-        print(f"\n[{timestamp}]")
-        print("Command:", cmd)
-        print("Result:", result[:200])
+        click.secho(f"\n[{timestamp}]", fg="green")
+        click.secho(f"Command: {cmd}", fg="green")
+        click.secho(f"Result: {result[:200]}", fg=_infer_color(result[:200]))
 
 if __name__ == "__main__":
     cli()
