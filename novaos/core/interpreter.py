@@ -1,5 +1,6 @@
 from novaos.utils.logger import setup_logger
 setup_logger()
+
 def interpret(text: str) -> dict:
     """
     Converts natural language to structured command.
@@ -12,5 +13,13 @@ def interpret(text: str) -> dict:
 
     if "hello" in text:
         return {"action": "greet"}
+    
+    if "organize" in text:
+        return {
+            "action": "organize_directory",
+            "target": "downloads",
+            "mode": "by_extension",
+            "dry_run": True
+        }
 
     return {"action": "unknown", "original": text}
