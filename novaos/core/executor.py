@@ -5,6 +5,9 @@ from pathlib import Path
 import json
 
 
+UNDO_FILE = Path.home() / ".novaos" / "novaos_undo.json"
+
+
 def execute(command: dict):
     action = command.get("action")
 
@@ -65,12 +68,59 @@ def execute(command: dict):
 
         # Save undo log if real execution
         if not dry_run and undo_log:
-            with open("novaos_undo.json", "w") as f:
+            UNDO_FILE.parent.mkdir(parents=True, exist_ok=True)
+            with open(UNDO_FILE, "w") as f:
                 json.dump(undo_log, f, indent=4)
+
+        if not moved_files:
+            if dry_run:
+                return ["No files to organize in Downloads."]
+            return ["No files were moved, so undo data was not created."]
 
         return moved_files
 
     # -----------------------------
     # UNKNOWN COMMAND
     # -----------------------------
+        # -----------------------------
+    # UNDO LAST ORGANIZATION
+    # -----------------------------
+    if action == "undo_last":
+        undo_file = UNDO_FILE
+
+        if not undo_file.exists():
+            return "No undo data found. Run `nova command \"organize downloads\" --force` first."
+
+        # import json
+
+        with open(undo_file, "r") as f:
+            undo_log = json.load(f)
+
+        restored = []
+        affected_folders = set()
+
+        for entry in undo_log:
+            original = Path(entry["original"])
+            restore_to = Path(entry["restore_to"])
+
+            if original.exists():
+                shutil.move(str(original), str(restore_to))
+                restored.append(f"Restored {restore_to.name}")
+                affected_folders.add(original.parent)
+
+        # Remove empty folders
+        for folder in affected_folders:
+            try:
+                if folder.exists() and not any(folder.iterdir()):
+                    folder.rmdir()
+                    restored.append(f"Removed empty folder {folder.name}")
+            except Exception:
+                pass
+
+        undo_file.unlink()
+
+        if not restored:
+            return ["Nothing to restore from the last operation."]
+
+        return restored
     return "Unknown command"

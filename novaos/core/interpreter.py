@@ -21,5 +21,7 @@ def interpret(text: str) -> dict:
             "mode": "by_extension",
             "dry_run": True
         }
+    if "undo" in text:
+        return {"action": "undo_last"}
 
     return {"action": "unknown", "original": text}
