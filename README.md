@@ -116,6 +116,8 @@ nova "undo"
 nova history
 ```
 
+![Organize Downloads Demo](docs/images/organize-downloads-demo.svg)
+
 ---
 
 ## Safe workflow (recommended)
@@ -142,10 +144,12 @@ nova "undo import"
 
 NovaOS stores removed imports in `import_log.json` and uses it for restore.
 
+![Fix Import Demo](docs/images/fix-import-demo.svg)
+
 ---
 
 ## Output files you will see
-
+s
 - `novaos_report_YYYYMMDD_HHMMSS.json` → analysis report
 - `import_log.json` → temporary undo log for import fixes
 
