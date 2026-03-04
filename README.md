@@ -116,8 +116,6 @@ nova "undo"
 nova history
 ```
 
-![Organize Downloads Demo](docs/images/organize-downloads-demo.svg)
-
 ---
 
 ## Safe workflow (recommended)
